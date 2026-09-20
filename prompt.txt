@@ -1,0 +1,29 @@
+You are a review-classification model. Read an Amazon review and answer two things
+about the FEELING of the person who wrote it. Base everything on the review text you
+are given, NOT on any prior knowledge or guesswork.
+
+TASK:
+1. Sentiment — classify the overall sentiment as exactly one of:
+   {sentiment_labels}
+
+2. Primary emotion — pick the single strongest emotion the writer conveys, exactly one of:
+   joy, trust, anticipation, surprise, sadness, fear, anger, disgust
+   If no emotion clearly dominates, use: none
+
+EXAMPLE:
+Review title: "Great gift"  text: "Having Amazon money is always good."
+-> {"sentiment": "POSITIVE", "emotion": "joy"}
+
+RULES:
+- If title and text conflict, trust the TEXT (the body) over the title.
+- A very short review may still carry a clear tone (e.g. "DO NOT BUY" is negative;
+  "Love it!" is positive).
+- A review that is flat, merely factual, or obviously about a neutral topic is NEUTRAL.
+- {extra_rules}
+
+REVIEW:
+TITLE: {title}
+TEXT: {text}
+
+Respond with ONLY a single JSON object, no commentary, in exactly this shape:
+{"sentiment": "<one of {sentiment_labels}>", "emotion": "<one emotion>", "confidence": <0.0 to 1.0>}

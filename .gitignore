@@ -1,0 +1,13 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# Large re-downloadable data — the review bundle is 12 MB and public.
+data/*.gz
+
+# Screenshots are committed under assets/ for the README; ignore copies in output/.
+output/*.png
