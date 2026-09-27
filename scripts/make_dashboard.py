@@ -95,17 +95,15 @@ section .desc {{ color:var(--muted); font-size:.86rem; margin-bottom:16px; }}
 .hbar-row .num {{ text-align:right; color:var(--muted); font-variant-numeric:tabular-nums; }}
 
 /* Confusion matrix */
-.confusion {{ display:grid; grid-template-columns:auto auto; gap:0; justify-content:start; }}
-.conf-row {{ display:contents; }}
-.conf-cell {{ min-width:86px; text-align:center; padding:14px 10px; font-weight:700;
-  border:1px solid var(--surface); position:relative; }}
-.conf-cell .n {{ font-size:1.05rem; }}
-.conf-cell .pct {{ font-size:.72rem; color:rgba(0,0,0,.55); font-weight:600; }}
-.conf-head-row, .conf-head-col {{ color:var(--muted); font-size:.74rem; text-transform:uppercase;
-  letter-spacing:.05em; font-weight:700; }}
-.conf-corner {{ }}
-.conf-head-col {{ transform:rotate(180deg); writing-mode:vertical-rl; align-self:center;
-  justify-self:center; }}
+table.confusion {{ border-collapse:separate; border-spacing:6px; font-size:.85rem; }}
+.confusion th, .confusion td {{ text-align:center; padding:10px 14px; border-radius:8px; }}
+.confusion thead th {{ color:var(--muted); text-transform:uppercase; font-size:.72rem;
+  letter-spacing:.05em; font-weight:700; background:var(--surface-2); }}
+.confusion .corner {{ font-size:.62rem; text-transform:none; letter-spacing:0; line-height:1.35; }}
+.confusion .rowlabel {{ text-align:left; color:var(--text); font-size:.8rem; font-weight:700; }}
+.confusion td.cell {{ font-weight:800; font-size:1.05rem; min-width:70px; }}
+.confusion .rtot {{ color:var(--muted); font-size:.76rem; font-weight:600; }}
+.confusion .rtot.rtot-h {{ font-size:.68rem; }}
 .legend {{ display:flex; gap:10px; align-items:center; font-size:.75rem; color:var(--muted); margin-top:10px;}}
 .legend .swatch {{ width:12px; height:12px; border-radius:3px; display:inline-block; }}
 
@@ -211,8 +209,10 @@ footer {{ margin-top:30px; padding-top:16px; border-top:1px solid var(--border);
 
   <section>
     <h2>Where the model succeeds and fails</h2>
-    <div class="desc">Confusion matrix &mdash; true answer on the top, what the model predicted on the side.
-      Bright diagonal = correct. Off-diagonal cells show exactly which classes get confused with which.</div>
+    <div class="desc">How to read it: <strong>rows</strong> = the rating-based answer (true),
+      <strong>columns</strong> = what the model predicted. Where row and column match (the
+      diagonal) the model was right; anywhere else is a mistake. The <strong>total</strong>
+      column shows how many reviews are in each answer class.</div>
     <div class="cols">
       <div>
         <div id="confusion"></div>
@@ -382,24 +382,27 @@ function renderConfusion(){{
   used.forEach(a=>used.forEach(b=>{{ const n=rows.filter(r=>r.correct===a&&r.pred===b).length;
     cell[a+'_'+b]=n; maxn=Math.max(maxn,n); }}));
   function bg(a,b){{
-    const n=cell[a+'_'+b]||0; const t=n/maxn;
-    // interp across accent ramp
+    const n=cell[a+'_'+b]||0; const t=maxn? n/maxn : 0;
     const lo=[31,42,56], hi=[110,168,254];
     const c=lo.map((v,i)=>Math.round(v+(hi[i]-v)*t));
     const txt = t>0.4 ? '#0b0e13':'#eef1f6';
-    return `background:rgb(${c});color:${txt}`;
+    return `background:rgb(${{c}});color:${{txt}}`;
   }}
-  let html=`<div class="confusion"><div class="conf-cell conf-corner"></div>`;
-  used.forEach(b=>html+=`<div class="conf-cell conf-head-row">${b}</div>`);
+  let html=`<table class="confusion"><thead><tr>`+
+    `<th class="corner">true ↓<br>predicted →</th>`;
+  used.forEach(b=>html+=`<th>${b}</th>`);
+  html+=`<th class="rtot rtot-h">total</th></tr></thead><tbody>`;
   used.forEach(a=>{{
-    html+=`<div class="conf-cell conf-head-col">${a}</div>`;
+    const total=rows.filter(r=>r.correct===a).length;
+    html+=`<tr><th scope="row" class="rowlabel">${a}</th>`;
     used.forEach(b=>{{
       const n=cell[a+'_'+b]||0;
-      html+=`<div class="conf-cell" style="${bg(a,b)}"><div class="n">${n}</div>`+
-        `<div class="pct">${rows.length?Math.round(100*n/rows.length)+'% of sample':''}</div>`;
+      html+=`<td class="cell" style="${bg(a,b)}" `+
+        `title="${a} true, ${b} predicted: ${n} of ${total}">${n}</td>`;
     }});
+    html+=`<td class="rtot">${total}</td></tr>`;
   }});
-  html+=`</div>`;
+  html+=`</tbody></table>`;
   el.innerHTML=html;
   // legend swatches
   document.getElementById('lg-lo').style.background='rgb(31,42,56)';
