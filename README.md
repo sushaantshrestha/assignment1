@@ -208,9 +208,10 @@ python3 scripts/make_dashboard.py \
   --out dashboard/index.html
 ```
 
-Set `MBAX_BASE_URL`, `MBAX_API_KEY`, `MBAX_MODEL` if you use a different OpenAI-compatible
-endpoint; defaults match the course endpoint used for this run. The seed and temperature (0.0)
-are fixed so results are repeatable.
+The API key is read from the `MBAX_API_KEY` environment variable **only** — the
+repository never contains a credential. `MBAX_BASE_URL` and `MBAX_MODEL` default to the
+course endpoint used for this run (`http://dobolyi.com:9000/v1` / `DeepSeek-V4-Flash-0731`).
+The seed (2026) and temperature (0.0) are fixed so results are repeatable.
 
 ---
 

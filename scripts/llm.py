@@ -4,6 +4,12 @@ from openai import OpenAI
 
 from config import BASE_URL, API_KEY, MODEL, PROMPT_PATH, NRC_EMOTIONS
 
+if not API_KEY:
+    raise RuntimeError(
+        "MBAX_API_KEY is not set. Export it before running (see README):\n"
+        "    export MBAX_API_KEY=\"<your key>\""
+    )
+
 _CLIENT = OpenAI(base_url=BASE_URL, api_key=API_KEY)
 
 # Accepted sentiment labels per task setting.

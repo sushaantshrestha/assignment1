@@ -1,12 +1,14 @@
 """Central configuration for model calls (OpenAI-compatible endpoint).
 
-Values are read from environment variables first so no credentials need to be
-committed; fall back to the course-provided endpoint.
+The API key is read ONLY from the environment so no credential is committed to
+the repository. Set it before running:
+
+    export MBAX_API_KEY="<your key>"   (optionally MBAX_BASE_URL / MBAX_MODEL)
 """
 import os
 
 BASE_URL = os.environ.get("MBAX_BASE_URL", "http://dobolyi.com:9000/v1")
-API_KEY = os.environ.get("MBAX_API_KEY", "6418")
+API_KEY = os.environ.get("MBAX_API_KEY")
 MODEL = os.environ.get("MBAX_MODEL", "DeepSeek-V4-Flash-0731")
 
 # Absolute path to the project's prompt template (keyed to repo layout).
