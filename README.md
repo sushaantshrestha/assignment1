@@ -242,10 +242,8 @@ and temperature (0.0) are fixed, so running again gives the same answers.
 ```
 
 *How I worked on this:* I built this project with an AI agent — it wrote the code, ran the
-analysis, and drafted this report. Before submitting, I went through the report myself: I
-re-checked every number against the saved files in `output/`, looked at the confusion matrix
-and the mismatched reviews directly, and rewrote the explanations here in my own words so they
-reflect what I actually did and learned.
+analysis, and drafted this report. Before submitting, I went through the report myself and
+re-checked every number against the saved files in `output/`.
 
 *Data citation:* Hou, Yupeng; Li, Jiacheng; He, Zhankui; Yan, An; Chen, Xiusi; McAuley, Julian.
 "Bridging Language and Items for Retrieval and Recommendation." arXiv:2403.03952 (2024) — the
