@@ -121,8 +121,9 @@ section .desc {{ color:var(--muted); font-size:.86rem; margin-bottom:16px; }}
 .vbar .tl {{ position:absolute; top:-18px; width:100%; text-align:center; font-size:.7rem;
   color:var(--muted); }}
 .vbar-ticks {{ display:flex; gap:6px; padding:4px 8px 0; }}
-.vbar-ticks span {{ flex:1; text-align:center; font-size:.62rem; color:var(--muted);
-  overflow:hidden; white-space:nowrap; }}
+.vbar-ticks span {{ flex:1; min-width:0; text-align:center; font-size:.56rem;
+  letter-spacing:-.02em; color:var(--muted); overflow:hidden; white-space:nowrap;
+  text-overflow:ellipsis; }}
 
 /* Metric pills */
 .pill-row {{ display:flex; flex-wrap:wrap; gap:10px; }}
@@ -284,7 +285,7 @@ let fCorrect='all', fClass='all', fEmo='all', fSearch='', sortK='rating', sortDi
 const EMO = __EMO__;
 const THEMES = {{
   dark:  {{ '--bg':'#0f1216','--surface':'#181d24','--surface-2':'#1f2630','--border':'#2a333f','--text':'#edf1f6','--muted':'#9aa6b5','--accent':'#6ea8fe','--accent-2':'#9758ff','--good':'#4cd08d','--warn':'#f2c14e','--bad':'#f06a6a','--pos':'#4cd08d','--neu':'#f2c14e','--neg':'#f06a6a' }},
-  light: {{ '--bg':'#f7f8fa','--surface':'#ffffff','--surface-2':'#eef1f5','--border':'#e0e4ea','--text':'#17202a','--muted':'#5d6b7a','--accent':'#2563eb','--accent-2':'#7c3aed','--good':'#16a34a','--warn':'#d97706','--bad':'#dc2626','--pos':'#16a34a','--neu':'#d97706','--neg':'#dc2626' }},
+  light: {{ '--bg':'#f7f8fa','--surface':'#ffffff','--surface-2':'#eef1f5','--border':'#e0e4ea','--text':'#17202a','--muted':'#5d6b7a','--accent':'#2563eb','--accent-2':'#7c3aed','--good':'#15803d','--warn':'#b45309','--bad':'#b91c1c','--pos':'#15803d','--neu':'#b45309','--neg':'#b91c1c' }},
   sepia: {{ '--bg':'#f4ead9','--surface':'#fbf5e8','--surface-2':'#efe3cf','--border':'#d8c7a3','--text':'#3b3020','--muted':'#7c6a4e','--accent':'#9a5b23','--accent-2':'#6d7f32','--good':'#3f7d3a','--warn':'#a8641c','--bad':'#a63c2b','--pos':'#3f7d3a','--neu':'#a8641c','--neg':'#a63c2b' }},
 }};
 function applyTheme(name){{
@@ -340,7 +341,10 @@ function renderKpis(){{
 }}
 function majorityLabel(run){{
   const cnt={{}}; run.rows.forEach(r=>cnt[r.correct]=(cnt[r.correct]||0)+1);
-  return Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0];
+  const entries=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+  const top=entries[0][1];
+  const tied=entries.filter(e=>e[1]===top).length;
+  return tied>1 ? "any one class (tie)" : entries[0][0];
 }}
 
 function renderClassAcc(){{
@@ -414,7 +418,7 @@ function renderEmotions(){{
   function bars(o,parent,ticks){{
     const mx=Math.max(1,...all.map(e=>o[e]||0));
     parent.innerHTML='';
-    ticks.innerHTML=all.map(e=>`<span title="${e}">${e.slice(0,6)}</span>`).join('');
+    ticks.innerHTML=all.map(e=>`<span title="${e}">${e}</span>`).join('');
     all.forEach(e=>{{
       const v=o[e]||0, b=document.createElement('div'); b.className='vbar';
       // zero-count columns get a faint stub so the axis is visible; real hits

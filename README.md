@@ -102,7 +102,7 @@ class of chart bug.
 | Run | Reviews | Agreement | Majority-class baseline | Edge over baseline |
 |---|---|---|---|---|
 | Imbalanced, 2-class (first 100) | 100 | **98.0%** | 93.0% | +5.0 pts |
-| Balanced, 3-class (seed 2026) | 150 | **70.7%** | 33.3% | +37.4 pts |
+| Balanced, 3-class (seed 2026) | 150 | **70.7%** | 33.3% | +37.3 pts |
 
 ### Why the lopsided run looked so accurate (Q1)
 
