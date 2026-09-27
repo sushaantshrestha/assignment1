@@ -312,22 +312,31 @@ function renderKpis(){
   const kids=[
     ['Agreement vs rating', pc, m.agreement!==undefined?'('+Math.round(m.agreement*1000)/10+'% saved)':'', g],
     ['Reviews scored', cls, m.sample||'', ''],
-    ['vs majority baseline', '+'+(gain).toFixed(1)+' pts', 'always-pick-'+majorityLabel(run())+ ' = '+Math.round(base*1000)/10+'%', gain>0?'val-warn':''],
+    ['vs majority baseline', '+'+(gain).toFixed(1)+' pts',
+     (isTie(run())? 'guessing any single class = ' : 'always-pick-'+majorityLabel(run())+ ' = ')+Math.round(base*1000)/10+'%',
+     gain>0?'val-warn':''],
     ['LLM failures', fails, fails? 'unable to produce a label':'clean run', fails? 'val-bad':'val-good'],
   ];
   document.getElementById('kpis').innerHTML = kids.map(k=>
     `<div class="kpi"><div class="label">${k[0]}</div><div class="value ${k[3]}">${k[1]}</div>`+
     `<div class="hint">${k[2]}</div></div>`).join('');
   document.getElementById('baseline_note').textContent =
-    'The data is heavily skewed: the majority answer-class is '+majorityLabel(run())+
-    ' '+Math.round(base*1000)/10+'% of this sample. Guessing it every time already looks accurate.';
+    isTie(run())
+    ? 'These classes are perfectly balanced in this sample (33.3% each), so guessing any single class every time already scores 33.3%.'
+    : 'The data is heavily skewed: the majority answer-class is '+majorityLabel(run())+
+      ' '+Math.round(base*1000)/10+'% of this sample. Guessing it every time already looks accurate.';
 }
 function majorityLabel(run){
   const cnt={}; run.rows.forEach(r=>cnt[r.correct]=(cnt[r.correct]||0)+1);
   const entries=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
   const top=entries[0][1];
   const tied=entries.filter(e=>e[1]===top).length;
-  return tied>1 ? "any one class (tie)" : entries[0][0];
+  return tied>1 ? "any single class" : entries[0][0];
+}
+function isTie(run){
+  const cnt={}; run.rows.forEach(r=>cnt[r.correct]=(cnt[r.correct]||0)+1);
+  const entries=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+  return entries.filter(e=>e[1]===entries[0][1]).length>1;
 }
 
 function renderClassAcc(){
