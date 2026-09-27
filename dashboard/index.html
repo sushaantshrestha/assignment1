@@ -101,6 +101,8 @@ section .desc { color:var(--muted); font-size:.86rem; margin-bottom:16px; }
 .vbar { flex:1; border-radius:5px 5px 2px 2px; background:var(--accent); min-width:0;
   position:relative; transition:height .5s ease; }
 .vbar:hover { filter:brightness(1.2); }
+.vbar-none { border-left:1px dashed var(--border); border-top-left-radius:0;
+  border-bottom-left-radius:0; }
 .vbar .tl { position:absolute; top:-18px; width:100%; text-align:center; font-size:.7rem;
   color:var(--muted); }
 .vbar-ticks { display:flex; gap:6px; padding:4px 8px 0; }
@@ -310,7 +312,7 @@ function renderKpis(){
   const gain=(rate-base)*100;
   const g = (rate>base? 'val-good':(rate<base?'val-bad':'val-warn'));
   const kids=[
-    ['Agreement vs rating', pc, m.agreement!==undefined?'('+Math.round(m.agreement*1000)/10+'% saved)':'', g],
+    ['Agreement vs rating', pc, m.agreement!==undefined?'matches saved output':'', g],
     ['Reviews scored', cls, m.sample||'', ''],
     ['vs majority baseline', '+'+(gain).toFixed(1)+' pts',
      (isTie(run())? 'guessing any single class = ' : 'always-pick-'+majorityLabel(run())+ ' = ')+Math.round(base*1000)/10+'%',
@@ -377,7 +379,7 @@ function renderConfusion(){
     used.forEach(b=>{
       const n=cell[a+'_'+b]||0;
       html+=`<div class="conf-cell" style="${bg(a,b)}"><div class="n">${n}</div>`+
-        `<div class="pct">${rows.length?Math.round(100*n/rows.length)+'% all':''}</div></div>`;
+        `<div class="pct">${rows.length?Math.round(100*n/rows.length)+'% of sample':''}</div>`;
     });
   });
   html+=`</div>`;
@@ -412,7 +414,8 @@ function renderEmotions(){
     parent.innerHTML='';
     ticks.innerHTML=all.map(e=>`<span title="${e}">${e}</span>`).join('');
     all.forEach(e=>{
-      const v=o[e]||0, b=document.createElement('div'); b.className='vbar';
+      const v=o[e]||0, b=document.createElement('div');
+      b.className = e==='none' ? 'vbar vbar-none' : 'vbar';
       // zero-count columns get a faint stub so the axis is visible; real hits
       // get an accent bar whose height is proportional (min 6px so thin ones
       // never collapse to nothing).
